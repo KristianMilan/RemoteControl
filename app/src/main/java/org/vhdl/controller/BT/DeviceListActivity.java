@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.vhdl.controller;
+package org.vhdl.controller.BT;
 
 import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
@@ -32,9 +32,11 @@ import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
 
-//import com.example.android.common.logger.Log;
+import org.vhdl.controller.R;
 
 import java.util.Set;
+
+//import com.example.android.common.logger.Log;
 
 /**
  * This Activity appears as a dialog. It lists any paired devices and
@@ -173,7 +175,9 @@ public class DeviceListActivity extends Activity {
             // Get the device MAC address, which is the last 17 chars in the View
             String info = ((TextView) v).getText().toString();
             String address = info.substring(info.length() - 17);
-
+            if(info.equals(getResources().getText(R.string.none_paired).toString()) || info.equals(getResources().getText(R.string.none_found).toString())){
+                finish();
+            }
             // Create the result Intent and include the MAC address
             Intent intent = new Intent();
             intent.putExtra(EXTRA_DEVICE_ADDRESS, address);

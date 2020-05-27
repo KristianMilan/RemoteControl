@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.vhdl.controller;
+package org.vhdl.controller.BT;
 
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;

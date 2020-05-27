@@ -17,6 +17,8 @@
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
 
     <string name="app_name">Remote Controller</string>
+    <string name="via_bt">connected via Bluetooth</string>
+    <string name="main_choose">Choose a connecting mode</string>
     <!--  BluetoothChat -->
     <string name="turn_on">turn on</string>
     <string name="turn_off">turn off</string>

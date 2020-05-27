@@ -14,9 +14,8 @@
  * limitations under the License.
  */
 
-package org.vhdl.controller;
+package org.vhdl.controller.BT;
 
-import android.app.ActionBar;
 import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
@@ -30,16 +29,24 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.Spinner;
+import android.widget.TextView;
 import android.widget.Toast;
-import android.support.v4.app.*;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
+
+import org.json.JSONException;
+import org.vhdl.controller.R;
+import org.vhdl.controller.utils.JsonMaker;
+import org.vhdl.controller.utils.SupportedAction;
+import org.vhdl.controller.ui.main.MainViewModel;
 
 //import com.example.android.common.logger.Log;
 
@@ -59,6 +66,9 @@ public class BluetoothChatFragment extends Fragment {
     //private ListView mConversationView;
     private EditText mOutEditText;
     private ImageButton mSendButton;
+    private TextView Textview_device_name;
+    private Spinner CommandSelect;
+    private String command;
     //private Button turnon;
     //private Button turnoff;
 
@@ -147,14 +157,29 @@ public class BluetoothChatFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_bluetooth_chat, container, false);
+        return inflater.inflate(R.layout.bt_fragment, container, false);
     }// show bluebooth list
 
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         //mConversationView = view.findViewById(R.id.in);
-        mOutEditText = view.findViewById(R.id.attribute);
-        mSendButton = view.findViewById(R.id.imageButton);
+        mOutEditText = view.findViewById(R.id.attribute_bt);
+        mSendButton = view.findViewById(R.id.send_button_bt);
+        Textview_device_name = view.findViewById(R.id.var_device_status_bt);
+        CommandSelect = view.findViewById(R.id.command_selector_bt);
+        CommandSelect.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                command = SupportedAction.getAllowedcommend()[position];
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+            }
+        });
+        ArrayAdapter<String> cmdAdapter = new ArrayAdapter<String>(getContext(),
+                android.R.layout.simple_dropdown_item_1line, SupportedAction.getAllowedcommend());
+        CommandSelect.setAdapter(cmdAdapter);
         //turnon = view.findViewById(R.id.button_turnon);
         //turnoff = view.findViewById(R.id.button_turnoff);
     }// establish the conversation view
@@ -181,25 +206,25 @@ public class BluetoothChatFragment extends Fragment {
         View.OnClickListener listener = new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                switch (v.getId()){
-                    case R.id.imageButton:
-                        String message = mOutEditText.getText().toString();
-                        sendMessage(message);
-                        break;
-                    /*case R.id.button_turnon:
-                        String message2 = "31";
-                        sendMessage(message2);
-                        break;
-                    case R.id.button_turnoff:
-                        String message3 = "41";
-                        sendMessage(message3);
-                        break;*/
+                if (v.getId()==R.id.send_button_bt){
+                    String brightness= mOutEditText.getText().toString();
+                    JsonMaker maker = new JsonMaker();
+                    maker.setAction("command");
+                    maker.setID("","");
+                    maker.setType(command);
+                    String[] mquery = {brightness};
+                    maker.setQuerys(mquery);
+                    String Jsontosend = null;
+                    try {
+                        Jsontosend = maker.getJsonStr();
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                    sendMessage(Jsontosend);
                 }
             }
         };
         mSendButton.setOnClickListener(listener);
-        //turnon.setOnClickListener(listener);
-        //turnoff.setOnClickListener(listener);
 
         // Initialize the BluetoothChatService to perform bluetooth connections
         mChatService = new BluetoothChatService(activity, mHandler);
@@ -270,11 +295,11 @@ public class BluetoothChatFragment extends Fragment {
         if (null == activity) {
             return;
         }
-        final ActionBar actionBar = activity.getActionBar();
+        /*final ActionBar actionBar = activity.getActionBar();
         if (null == actionBar) {
             return;
         }
-        actionBar.setSubtitle(resId);
+        actionBar.setSubtitle(resId);*/
     }
 
     /**
@@ -287,11 +312,12 @@ public class BluetoothChatFragment extends Fragment {
         if (null == activity) {
             return;
         }
-        final ActionBar actionBar = activity.getActionBar();
+        /*final ActionBar actionBar = activity.getActionBar();
         if (null == actionBar) {
             return;
         }
-        actionBar.setSubtitle(subTitle);
+        actionBar.setSubtitle(subTitle);*/
+        Textview_device_name.setText(subTitle);
     }
 
     /**

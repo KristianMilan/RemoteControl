@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.vhdl.controller;
+package org.vhdl.controller.BT;
 
 /**
  * Defines several constants used between {@link BluetoothChatService} and the UI.
